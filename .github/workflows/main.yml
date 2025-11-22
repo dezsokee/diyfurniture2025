@@ -66,11 +66,11 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ env.IMAGE_REGISTRY }}/${{ github.repository_owner }}/${{ steps.name.outputs.image_name }}:${{ steps.vars.outputs.TAG }}
+            ${{ env.IMAGE_REGISTRY }}/${{ github.repository_owner }}/${{ steps.name.outputs.image_name }}:${{ steps.vars.outputs.tag }}
             ${{ env.IMAGE_REGISTRY }}/${{ github.repository_owner }}/${{ steps.name.outputs.image_name }}:latest
           platforms: linux/amd64
 
       - name: Print pushed image
         run: |
           echo "Pushed image location: ${{ env.IMAGE_REGISTRY }}/${{ github.repository_owner }}/${{ steps.name.outputs.image_name }}:latest"
-          echo "Pushed image: ${{ env.IMAGE_REGISTRY }}/${{ github.repository_owner }}/${{ steps.name.outputs.image_name }}:${{ steps.vars.outputs.TAG }}"
+          echo "Pushed image: ${{ env.IMAGE_REGISTRY }}/${{ github.repository_owner }}/${{ steps.name.outputs.image_name }}:${{ steps.vars.outputs.tag }}"
