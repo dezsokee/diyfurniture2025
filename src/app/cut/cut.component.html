@@ -1,0 +1,159 @@
+<div class="page-bg"></div>
+<div class="cut-container">
+  <header class="page-header" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
+    <h1 style="display:flex; align-items:center; gap:8px; justify-content:center; width:100%;"><mat-icon>design_services</mat-icon> Cut Planner</h1>
+    <span class="subtitle" style="display:block; width:100%; text-align:center;">Optimize elements on a sheet</span>
+  </header>
+
+  <form [formGroup]="form" class="cut-form center">
+    <section class="card sheet form-card">
+      <h2 class="card-title"><mat-icon>crop_landscape</mat-icon> Sheet Size</h2>
+      <p class="hint">Provide the raw sheet size in millimeters. Only positive values are accepted.</p>
+      <mat-form-field appearance="outline">
+        <mat-label>Width (mm)</mat-label>
+        <input matInput type="number" formControlName="sheetWidth" />
+        <button mat-icon-button matSuffix class="spin-btn up" type="button" (click)="incSheet('sheetWidth')" aria-label="Increase">
+          <mat-icon>north</mat-icon>
+        </button>
+        <button mat-icon-button matSuffix class="spin-btn down" type="button" (click)="decSheet('sheetWidth')" aria-label="Decrease">
+          <mat-icon>south</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('sheetWidth')?.invalid">Width is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Height (mm)</mat-label>
+        <input matInput type="number" formControlName="sheetHeight" />
+        <button mat-icon-button matSuffix class="spin-btn up" type="button" (click)="incSheet('sheetHeight')" aria-label="Increase">
+          <mat-icon>north</mat-icon>
+        </button>
+        <button mat-icon-button matSuffix class="spin-btn down" type="button" (click)="decSheet('sheetHeight')" aria-label="Decrease">
+          <mat-icon>south</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('sheetHeight')?.invalid">Height is required</mat-error>
+      </mat-form-field>
+    </section>
+
+    <section class="card elements form-card">
+      <div class="card-header">
+        <h2 class="card-title"><mat-icon>view_module</mat-icon> Elements</h2>
+        <button mat-raised-button class="primary-btn" color="primary" type="button" (click)="addElement()">
+          <mat-icon>add_circle</mat-icon>
+          Add Element
+        </button>
+      </div>
+      <p class="hint">Add items with width and height. Use the trash icon to remove an item.</p>
+
+      <div class="element-list" formArrayName="elements">
+        <div class="element-item" *ngFor="let el of elements.controls; let i = index" [formGroupName]="i">
+          <div class="element-type">
+            <mat-icon class="type-icon">{{ getTypeIcon(el.value.type) }}</mat-icon>
+            <mat-form-field appearance="outline" class="type-select">
+              <mat-label>Type</mat-label>
+              <mat-select formControlName="type">
+                <mat-option value="door"><mat-icon>door_front</mat-icon> Door</mat-option>
+                <mat-option value="leg"><mat-icon>construction</mat-icon> Leg</mat-option>
+                <mat-option value="shelf"><mat-icon>auto_awesome_mosaic</mat-icon> Shelf</mat-option>
+                <mat-option value="panel"><mat-icon>crop_square</mat-icon> Panel</mat-option>
+                <mat-option value="accessory"><mat-icon>extension</mat-icon> Accessory</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Width</mat-label>
+            <input matInput type="number" formControlName="width" />
+            <button mat-icon-button matSuffix class="spin-btn up" type="button" (click)="incEl(i, 'width')" aria-label="Increase">
+              <mat-icon>north</mat-icon>
+            </button>
+            <button mat-icon-button matSuffix class="spin-btn down" type="button" (click)="decEl(i, 'width')" aria-label="Decrease">
+              <mat-icon>south</mat-icon>
+            </button>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Height</mat-label>
+            <input matInput type="number" formControlName="height" />
+            <button mat-icon-button matSuffix class="spin-btn up" type="button" (click)="incEl(i, 'height')" aria-label="Increase">
+              <mat-icon>north</mat-icon>
+            </button>
+            <button mat-icon-button matSuffix class="spin-btn down" type="button" (click)="decEl(i, 'height')" aria-label="Decrease">
+              <mat-icon>south</mat-icon>
+            </button>
+          </mat-form-field>
+
+          <button mat-icon-button class="delete-btn" color="warn" type="button" (click)="removeElement(i)" aria-label="Remove">
+            <mat-icon>delete_forever</mat-icon>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="actions center">
+      <button mat-raised-button class="primary-btn" color="accent" type="button" (click)="optimize()" [disabled]="loading">
+        <mat-icon>auto_fix_high</mat-icon>
+        Optimize
+      </button>
+    </section>
+  </form>
+
+  <section class="card visualization summary viz-card">
+    <h2 class="card-title"><mat-icon>list_alt</mat-icon> Summary</h2>
+    <p class="hint">Overview of the sheet and elements to optimize.</p>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <mat-icon class="summary-icon">crop_landscape</mat-icon>
+        <div class="summary-content">
+          <div class="summary-title">Sheet</div>
+          <div class="summary-detail">{{ form.value.sheetWidth }} mm × {{ form.value.sheetHeight }} mm</div>
+        </div>
+      </div>
+
+      <div class="summary-item" *ngFor="let el of elements.value; let i = index">
+        <mat-icon class="summary-icon">{{ getTypeIcon(el.type) }}</mat-icon>
+        <div class="summary-content">
+          <div class="summary-title">Element #{{ i + 1 }}</div>
+          <div class="summary-detail">{{ el.width }} mm × {{ el.height }} mm</div>
+        </div>
+        <button mat-icon-button color="warn" (click)="removeElement(i)" aria-label="Remove">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card visualization viz-card">
+    <h2 class="card-title"><mat-icon>grid_on</mat-icon> Visualization</h2>
+    <div *ngIf="errorMsg" class="error">{{ errorMsg }}</div>
+    <div *ngIf="placements.length === 0 && !errorMsg">No placements yet.</div>
+    <table class="placements-table" *ngIf="placements.length">
+      <thead>
+        <tr>
+          <th><mat-icon>looks_one</mat-icon> ID</th>
+          <th><mat-icon>straighten</mat-icon> X</th>
+          <th><mat-icon>straighten</mat-icon> Y</th>
+          <th><mat-icon>swap_horiz</mat-icon> W</th>
+          <th><mat-icon>swap_vert</mat-icon> H</th>
+          <th><mat-icon>sync</mat-icon> Rotated</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of placements">
+          <td>{{ p.id }}</td>
+          <td>{{ p.x }}</td>
+          <td>{{ p.y }}</td>
+          <td>{{ p.width }}</td>
+          <td>{{ p.height }}</td>
+          <td>
+            <mat-icon [class.rotated]="p.rotated">{{ p.rotated ? 'check_circle' : 'cancel' }}</mat-icon>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="loading-content">
+      <mat-progress-spinner diameter="48" mode="indeterminate"></mat-progress-spinner>
+      <span>Optimizing...</span>
+    </div>
+  </div>
