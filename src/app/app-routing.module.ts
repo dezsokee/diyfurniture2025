@@ -9,6 +9,7 @@ const routes: Routes = [
   { path: 'draw', component: Draw2dComponent },
   { path: 'view', component: View3DComponent },
   { path: 'bill', component: BillofmaterialsComponent },
+  { path: 'cut', loadComponent: () => import('./cut/cut.component').then(m => m.CutComponent) },
   { path: 'project', component: ProjectComponent },
   { path: '', redirectTo: 'draw', pathMatch: 'full' }
 ];
