@@ -62,23 +62,27 @@
           <mat-form-field appearance="outline">
             <mat-label>Width</mat-label>
             <input matInput type="number" formControlName="width" />
-            <button mat-icon-button matSuffix class="spin-btn up" type="button" (click)="incEl(i, 'width')" aria-label="Increase">
-              <mat-icon>north</mat-icon>
-            </button>
-            <button mat-icon-button matSuffix class="spin-btn down" type="button" (click)="decEl(i, 'width')" aria-label="Decrease">
-              <mat-icon>south</mat-icon>
-            </button>
+            <span matSuffix class="spin-suffix">
+              <button mat-icon-button class="spin-btn up" type="button" (click)="incEl(i, 'width')" aria-label="Increase">
+                <mat-icon>north</mat-icon>
+              </button>
+              <button mat-icon-button class="spin-btn down" type="button" (click)="decEl(i, 'width')" aria-label="Decrease">
+                <mat-icon>south</mat-icon>
+              </button>
+            </span>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Height</mat-label>
             <input matInput type="number" formControlName="height" />
-            <button mat-icon-button matSuffix class="spin-btn up" type="button" (click)="incEl(i, 'height')" aria-label="Increase">
-              <mat-icon>north</mat-icon>
-            </button>
-            <button mat-icon-button matSuffix class="spin-btn down" type="button" (click)="decEl(i, 'height')" aria-label="Decrease">
-              <mat-icon>south</mat-icon>
-            </button>
+            <span matSuffix class="spin-suffix">
+              <button mat-icon-button class="spin-btn up" type="button" (click)="incEl(i, 'height')" aria-label="Increase">
+                <mat-icon>north</mat-icon>
+              </button>
+              <button mat-icon-button class="spin-btn down" type="button" (click)="decEl(i, 'height')" aria-label="Decrease">
+                <mat-icon>south</mat-icon>
+              </button>
+            </span>
           </mat-form-field>
 
           <button mat-icon-button class="delete-btn" color="warn" type="button" (click)="removeElement(i)" aria-label="Remove">

@@ -89,6 +89,9 @@ pre { background: var(--cut-pre); color: var(--cut-text); border-radius: 8px; pa
 ::ng-deep .cut-container .mat-mdc-form-field .mat-mdc-form-field-icon-suffix {
 	margin-right: 8px;
 }
+
+/* Ensure grouped suffix arrows align horizontally with gap */
+.spin-suffix { display: inline-flex; align-items: center; gap: 6px; }
 ::ng-deep .cut-container .mat-mdc-raised-button.mat-mdc-button-base {
 	background-color: #3b4249;
 	color: var(--cut-text);
