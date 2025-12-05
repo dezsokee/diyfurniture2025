@@ -61,7 +61,7 @@ export class CutComponent {
 
   decSheet(control: 'sheetWidth' | 'sheetHeight') {
     const current = Number(this.form.get(control)?.value) || 0;
-    this.form.get(control)?.setValue(Math.max(0, current - 1));
+    this.form.get(control)?.setValue(Math.max(1, current - 1));
   }
 
   incEl(index: number, key: 'width' | 'height') {
@@ -73,7 +73,7 @@ export class CutComponent {
   decEl(index: number, key: 'width' | 'height') {
     const group = this.elements.at(index) as FormGroup;
     const current = Number(group.get(key)?.value) || 0;
-    group.get(key)?.setValue(Math.max(0, current - 1));
+    group.get(key)?.setValue(Math.max(1, current - 1));
   }
 
   optimize() {

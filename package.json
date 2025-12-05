@@ -9,7 +9,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "bdd": "set TS_NODE_PROJECT=tsconfig.cucumber.json&& cucumber-js -p default",
-    "bdd:e2e": "set TS_NODE_PROJECT=tsconfig.cucumber.json&& cucumber-js -p e2e"
+    "bdd:e2e": "set TS_NODE_PROJECT=tsconfig.cucumber.json&& cucumber-js -p e2e",
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -40,18 +41,24 @@
     "@types/node": "^12.20.55",
     "@types/selenium-webdriver": "^4.35.1",
     "@types/wait-on": "^5.3.4",
+    "angular-eslint": "21.0.1",
     "baseline-browser-mapping": "^2.8.30",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "jasmine-core": "~3.8.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage": "~2.0.3",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
+    "prettier": "^3.7.4",
     "selenium-webdriver": "^4.36.0",
     "tree-kill": "^1.2.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "~5.8.3",
+    "typescript-eslint": "8.46.4",
     "wait-on": "^9.0.1"
   }
 }
