@@ -254,9 +254,6 @@ pre {
 	padding: 10px;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
-.placements-table .rotated {
-	color: #66bb6a;
-}
 
 /* Add centered form and helper styles */
 .cut-form.center {
@@ -273,7 +270,7 @@ pre {
 
 /* Visualization-like surface reused by Summary */
 .viz-card {
-	padding: 0;
+	padding: 16px;
 	overflow: hidden;
 }
 .viz-surface {

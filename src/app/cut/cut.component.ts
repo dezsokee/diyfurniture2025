@@ -88,7 +88,6 @@ export class CutComponent {
 				width: p.width,
 				height: p.height,
 				color: this.getTypeColor(type),
-				rotated: p.rotated,
 			};
 		});
 	}
