@@ -14,7 +14,6 @@ export interface Placement {
   y: number;
   width: number;
   height: number;
-  rotated: boolean;
 }
 
 export interface CutResponse {

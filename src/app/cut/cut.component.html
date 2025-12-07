@@ -285,12 +285,11 @@
 		<table class="placements-table" *ngIf="placements.length">
 			<thead>
 				<tr>
-					<th><mat-icon>looks_one</mat-icon> ID</th>
-					<th><mat-icon>straighten</mat-icon> X</th>
-					<th><mat-icon>straighten</mat-icon> Y</th>
-					<th><mat-icon>swap_horiz</mat-icon> W</th>
-					<th><mat-icon>swap_vert</mat-icon> H</th>
-					<th><mat-icon>sync</mat-icon> Rotated</th>
+				<th><mat-icon>looks_one</mat-icon> ID</th>
+				<th><mat-icon>straighten</mat-icon> X</th>
+				<th><mat-icon>straighten</mat-icon> Y</th>
+				<th><mat-icon>swap_horiz</mat-icon> W</th>
+				<th><mat-icon>swap_vert</mat-icon> H</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -300,11 +299,6 @@
 					<td>{{ p.y }}</td>
 					<td>{{ p.width }}</td>
 					<td>{{ p.height }}</td>
-					<td>
-						<mat-icon [class.rotated]="p.rotated">{{
-							p.rotated ? 'check_circle' : 'cancel'
-						}}</mat-icon>
-					</td>
 				</tr>
 			</tbody>
 		</table>
