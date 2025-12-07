@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
 	FormArray,
@@ -31,6 +31,7 @@ interface SheetDimensions {
 	styleUrls: ['./cut.component.scss'],
 })
 export class CutComponent {
+	@ViewChild('cutSvg', { static: false }) svgRef?: ElementRef<SVGSVGElement>;
 	form: FormGroup;
 	loading = false;
 	elements: FormArray;
@@ -176,5 +177,65 @@ export class CutComponent {
 			default:
 				return 'crop_square';
 		}
+	}
+
+	exportPng() {
+		if (!this.placements?.length) {
+			return;
+		}
+
+		const svgElement = this.svgRef?.nativeElement;
+		if (!svgElement) {
+			return;
+		}
+
+		const viewBox = svgElement.viewBox?.baseVal;
+		const width =
+			(viewBox && viewBox.width) || svgElement.clientWidth || 1000;
+		const height =
+			(viewBox && viewBox.height) || svgElement.clientHeight || 500;
+
+		const clonedSvg = svgElement.cloneNode(true) as SVGSVGElement;
+		clonedSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+		clonedSvg.setAttribute('width', String(width));
+		clonedSvg.setAttribute('height', String(height));
+
+		const serializer = new XMLSerializer();
+		const svgString = serializer.serializeToString(clonedSvg);
+		const blob = new Blob([svgString], {
+			type: 'image/svg+xml;charset=utf-8',
+		});
+		const url = URL.createObjectURL(blob);
+
+		const img = new Image();
+		img.onload = () => {
+			const canvas = document.createElement('canvas');
+			canvas.width = width;
+			canvas.height = height;
+			const ctx = canvas.getContext('2d');
+			if (!ctx) {
+				URL.revokeObjectURL(url);
+				return;
+			}
+
+			ctx.drawImage(img, 0, 0, width, height);
+			URL.revokeObjectURL(url);
+
+			canvas.toBlob((pngBlob) => {
+				if (!pngBlob) {
+					return;
+				}
+				const pngUrl = URL.createObjectURL(pngBlob);
+				const a = document.createElement('a');
+				a.href = pngUrl;
+				a.download = 'cut-layout.png';
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a);
+				URL.revokeObjectURL(pngUrl);
+			}, 'image/png');
+		};
+
+		img.src = url;
 	}
 }

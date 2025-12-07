@@ -285,11 +285,11 @@
 		<table class="placements-table" *ngIf="placements.length">
 			<thead>
 				<tr>
-				<th><mat-icon>looks_one</mat-icon> ID</th>
-				<th><mat-icon>straighten</mat-icon> X</th>
-				<th><mat-icon>straighten</mat-icon> Y</th>
-				<th><mat-icon>swap_horiz</mat-icon> W</th>
-				<th><mat-icon>swap_vert</mat-icon> H</th>
+					<th><mat-icon>looks_one</mat-icon> ID</th>
+					<th><mat-icon>straighten</mat-icon> X</th>
+					<th><mat-icon>straighten</mat-icon> Y</th>
+					<th><mat-icon>swap_horiz</mat-icon> W</th>
+					<th><mat-icon>swap_vert</mat-icon> H</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -303,8 +303,9 @@
 			</tbody>
 		</table>
 
-		<div class="cut-visualization-container">
+		<div class="cut-visualization-container" *ngIf="placements.length">
 			<svg
+				#cutSvg
 				class="cut-visualization"
 				[attr.viewBox]="'0 0 ' + svgSheetWidth + ' ' + svgSheetHeight"
 				preserveAspectRatio="xMidYMid meet"
@@ -332,6 +333,19 @@
 					></rect>
 				</ng-container>
 			</svg>
+		</div>
+
+		<div class="viz-actions">
+			<button
+				mat-stroked-button
+				color="primary"
+				type="button"
+				(click)="exportPng()"
+				[disabled]="!placements.length"
+			>
+				<mat-icon>download</mat-icon>
+				Export as PNG
+			</button>
 		</div>
 	</section>
 
