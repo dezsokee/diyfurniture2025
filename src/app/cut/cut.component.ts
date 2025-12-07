@@ -49,6 +49,22 @@ export class CutComponent {
 		});
 	}
 
+	private getTypeColor(type?: CutElement['type']): string {
+		switch (type) {
+			case 'door':
+				return '#90caf9'; // blue
+			case 'leg':
+				return '#a5d6a7'; // green
+			case 'shelf':
+				return '#ffe082'; // yellow
+			case 'accessory':
+				return '#ce93d8'; // purple
+			case 'panel':
+			default:
+				return '#b0bec5'; // grey
+		}
+	}
+
 	get svgSheetWidth(): number {
 		return this.form?.get('sheetWidth')?.value || 1;
 	}
@@ -58,15 +74,22 @@ export class CutComponent {
 	}
 
 	get parts() {
-		return (this.placements || []).map((p, index) => ({
-			id: p.id ?? index,
-			x: p.x,
-			y: p.y,
-			width: p.width,
-			height: p.height,
-			color: '#90caf9',
-			rotated: p.rotated,
-		}));
+		const formElements = this.elements.value as CutElement[];
+
+		return (this.placements || []).map((p, index) => {
+			const el = formElements.find((e) => e.id === p.id);
+			const type = el?.type;
+
+			return {
+				id: p.id ?? index,
+				x: p.x,
+				y: p.y,
+				width: p.width,
+				height: p.height,
+				color: this.getTypeColor(type),
+				rotated: p.rotated,
+			};
+		});
 	}
 
 	addElement() {
