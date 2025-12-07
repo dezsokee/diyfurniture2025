@@ -36,6 +36,7 @@ export class CutComponent {
 	elements: FormArray;
 	placements: Placement[] = [];
 	errorMsg: string | null = null;
+	private nextId = 1;
 
 	constructor(
 		private fb: FormBuilder,
@@ -93,7 +94,7 @@ export class CutComponent {
 	}
 
 	addElement() {
-		const nextId = this.elements.length + 1;
+		const nextId = this.nextId++;
 		const group = this.fb.group({
 			id: [nextId],
 			type: ['panel'],
