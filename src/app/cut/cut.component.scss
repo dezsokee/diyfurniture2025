@@ -318,14 +318,17 @@ pre {
 	color: var(--cut-muted);
 }
 
+/* Visualization styles */
+
 .cut-visualization-container {
+	margin-top: 20px;
+	margin-bottom: 20px;
 	width: 100%;
-	height: 400px; // or whatever fits your layout
+	height: 400px;
 }
 
 .cut-visualization {
 	width: 100%;
 	height: 100%;
-	border: 1px solid #ccc;
-	background: #fafafa;
+	background: rgb(49, 54, 61);
 }
