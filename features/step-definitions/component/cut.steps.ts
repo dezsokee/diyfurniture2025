@@ -1,7 +1,7 @@
 import { Before, Given, When, Then } from '@cucumber/cucumber';
 import assert from 'assert';
-import { FormBuilder } from '@angular/forms';
-import { of } from 'rxjs';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { of, throwError } from 'rxjs';
 import { ElementRef } from '@angular/core';
 
 // SUT imports
@@ -12,9 +12,14 @@ import { CutService, Placement } from '../../../src/app/cut/cut.service';
 class MockCutService {
 	optimizeCalls: unknown[] = [];
 	optimizeResponse: { placements: Placement[] } = { placements: [] };
+	shouldError = false;
+	errorMessage = 'Optimization failed';
 
 	optimize(req: unknown) {
 		this.optimizeCalls.push(req);
+		if (this.shouldError) {
+			return throwError(() => ({ error: { message: this.errorMessage } }));
+		}
 		return of(this.optimizeResponse);
 	}
 }
@@ -319,6 +324,37 @@ When('I attempt to export PNG', () => {
 	// For now, the mocks trigger synchronously where possible
 });
 
+When('I add {int} new elements', (count: number) => {
+	for (let i = 0; i < count; i += 1) {
+		context.component.addElement();
+	}
+});
+
+When('I remove the form element at index {int}', (index: number) => {
+	context.component.removeElement(index);
+});
+
+When('I optimize the layout', () => {
+	context.component.optimize();
+});
+
+Given(
+	'the optimize response has placements for element {int} at ({int}, {int}) size {int}x{int}',
+	(id: number, x: number, y: number, width: number, height: number) => {
+		context.mockCutService.optimizeResponse = {
+			placements: [{ id, x, y, width, height }],
+		};
+	}
+);
+
+Given(
+	'the optimize call will fail with message {string}',
+	(message: string) => {
+		context.mockCutService.shouldError = true;
+		context.mockCutService.errorMessage = message;
+	}
+);
+
 Then('the SVG sheet width should be {int}', (expectedWidth: number) => {
 	assert.strictEqual(context.component.svgSheetWidth, expectedWidth);
 });
@@ -352,6 +388,93 @@ Then(
 		assert.strictEqual(part.color, expectedColor);
 	}
 );
+
+	Then('there should be {int} form elements', (expectedCount: number) => {
+		assert.strictEqual(context.component.elements.length, expectedCount);
+	});
+
+	Then(
+		'form element {int} should have id {int}, type {string}, width {int}, height {int}',
+		(
+			index: number,
+			expectedId: number,
+			expectedType: string,
+			expectedWidth: number,
+			expectedHeight: number
+		) => {
+			const group = context.component.elements.at(index - 1) as FormGroup;
+			assert.ok(group, `Form element ${index} should exist`);
+			assert.strictEqual(group.get('id')?.value, expectedId);
+			assert.strictEqual(group.get('type')?.value, expectedType);
+			assert.strictEqual(group.get('width')?.value, expectedWidth);
+			assert.strictEqual(group.get('height')?.value, expectedHeight);
+		}
+	);
+
+	Then('the service should be called once', () => {
+		assert.strictEqual(context.mockCutService.optimizeCalls.length, 1);
+	});
+
+	Then(
+		'the last optimize payload should have sheet {int}x{int} and {int} element with id {int} width {int} height {int}',
+		(
+			sheetWidth: number,
+			sheetHeight: number,
+			elementCount: number,
+			elementId: number,
+			elementWidth: number,
+			elementHeight: number
+		) => {
+			const lastCall =
+				context.mockCutService.optimizeCalls[
+					context.mockCutService.optimizeCalls.length - 1
+				] as {
+					sheetWidth: number;
+					sheetHeight: number;
+					elements: Array<{ id: number; width: number; height: number }>;
+				};
+			assert.ok(lastCall, 'Optimize should have been called');
+			assert.strictEqual(lastCall.sheetWidth, sheetWidth);
+			assert.strictEqual(lastCall.sheetHeight, sheetHeight);
+			assert.strictEqual(lastCall.elements.length, elementCount);
+			const el = lastCall.elements[0];
+			assert.strictEqual(el.id, elementId);
+			assert.strictEqual(el.width, elementWidth);
+			assert.strictEqual(el.height, elementHeight);
+		}
+	);
+
+	Then(
+		'the component placements should have {int} item with id {int} at ({int}, {int}) size {int}x{int}',
+		(
+			count: number,
+			id: number,
+			x: number,
+			y: number,
+			width: number,
+			height: number
+		) => {
+			assert.strictEqual(context.component.placements.length, count);
+			const placement = context.component.placements[0];
+			assert.strictEqual(placement.id, id);
+			assert.strictEqual(placement.x, x);
+			assert.strictEqual(placement.y, y);
+			assert.strictEqual(placement.width, width);
+			assert.strictEqual(placement.height, height);
+		}
+	);
+
+	Then('the service should not be called', () => {
+		assert.strictEqual(context.mockCutService.optimizeCalls.length, 0);
+	});
+
+	Then('the component should show error {string}', (message: string) => {
+		assert.strictEqual(context.component.errorMsg, message);
+	});
+
+	Then('the component placements should be empty', () => {
+		assert.strictEqual(context.component.placements.length, 0);
+	});
 
 Then(
 	'part {int} should have color {string}',

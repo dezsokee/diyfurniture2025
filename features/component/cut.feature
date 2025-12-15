@@ -1,4 +1,4 @@
-Feature: CutComponent SVG visualization and PNG export behaviours
+Feature: CutComponent behaviours
 
   Background:
     Given a fresh CutComponent with mocked services
@@ -47,4 +47,38 @@ Feature: CutComponent SVG visualization and PNG export behaviours
     And the SVG should be serialized
     And a PNG blob should be created
     And a download link should be created with filename "cut-layout.png"
+
+  Scenario: Adding elements assigns defaults and ids
+    When I add 2 new elements
+    Then there should be 2 form elements
+    And form element 1 should have id 1, type "panel", width 100, height 50
+    And form element 2 should have id 2, type "panel", width 100, height 50
+
+  Scenario: Removing an element drops it from the form
+    When I add 2 new elements
+    And I remove the form element at index 0
+    Then there should be 1 form elements
+    And form element 1 should have id 2, type "panel", width 100, height 50
+
+  Scenario: Optimize sends payload when form is valid
+    Given the sheet width is 1200 and height is 600
+    And an element with id 5, type "panel", width 200, height 100 exists
+    And the optimize response has placements for element 5 at (0, 0) size 200x100
+    When I optimize the layout
+    Then the service should be called once
+    And the last optimize payload should have sheet 1200x600 and 1 element with id 5 width 200 height 100
+    And the component placements should have 1 item with id 5 at (0, 0) size 200x100
+
+  Scenario: Optimize skips when the form is invalid
+    Given the sheet width is 0 and height is 600
+    When I optimize the layout
+    Then the service should not be called
+
+  Scenario: Optimize error is captured and placements cleared
+    Given the sheet width is 800 and height is 400
+    And an element with id 1, type "panel", width 100, height 50 exists
+    And the optimize call will fail with message "boom"
+    When I optimize the layout
+    Then the component should show error "boom"
+    And the component placements should be empty
 
